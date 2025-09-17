@@ -86,18 +86,18 @@ println("product rule; f'g + g'f = ", pretty_print(string(derivative(f) * g + f 
 
 println("q1 p4")
 
-mod5q, mod5r = div_rem_mod(f*h,h,5)
+mod5q, mod5r = div_rem_mod_p(f*h,h,5)
 mod17q, mod17r = div_rem_mod_p(f*h,h,17)
 mod101q, mod101r = div_rem_mod_p(f*h,h,101)
-fmod3, fmod7, fmod101 = mod(f,3), mod(f,7), mod(f,101)
+fmod5, fmod17, fmod101 = mod(f,5), mod(f,17), mod(f,101)
 
 
 println("f * h ÷ h mod 5 = ", pretty_print(string(mod5q)))
-println("fmod3 = ", pretty_print(string(fmod3)))
-@show fmod3 == mod5q
+println("fmod3 = ", pretty_print(string(fmod5)))
+@show fmod5 == mod5q
 
 println("f * h ÷ h mod 17 = ", pretty_print(string(mod17q)))
-println("fmod7 = ", pretty_print(string(fmod7)))
+println("fmod17 = ", pretty_print(string(fmod17)))
 
 
 println("f * h ÷ h mod 101 = ", pretty_print(string(mod101q)))
