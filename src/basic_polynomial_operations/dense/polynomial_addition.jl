@@ -9,14 +9,13 @@
 """
 Add a polynomial and a term.
 """
-function +(p::PolynomialDense{C,D}, t::Term{C,D}) where {C,D}
+function +(p::PolynomialDense, t::Term)
     p = deepcopy(p)
     if t.degree > degree(p)
         push!(p, t)
     else
-        # +1 accounts for 1-based indexing
-        if !iszero(p.terms[t.degree + 1])
-            p.terms[t.degree + 1] = Term(p.terms[t.degree + 1].coeff + t.coeff, t.degree)
+        if !iszero(p.terms[t.degree + 1]) #+1 is due to indexing
+            p.terms[t.degree + 1] += t
         else
             p.terms[t.degree + 1] = t
         end
@@ -24,7 +23,6 @@ function +(p::PolynomialDense{C,D}, t::Term{C,D}) where {C,D}
     trim!(p)
     return p
 end
-
 
 # We won't re-implement any of these functions for dense polynomials, the abstract versions will 
 # produce the correct result.
