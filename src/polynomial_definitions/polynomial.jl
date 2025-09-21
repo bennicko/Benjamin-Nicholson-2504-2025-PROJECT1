@@ -87,7 +87,7 @@ end
 Construct a polynomial of the form x.
 """
 function x_poly(::Type{P})::P where {C,D,P<:Polynomial{C,D}}
-    return P([Term(1,1)])
+    return P([Term(one(C),one(D))])
 end
 x_poly(p::P) where {C,D,P<:Polynomial{C,D}} = x_poly(P)
 
@@ -370,16 +370,22 @@ Multiplication of polynomial and term.
 function *(t::Term{C,D}, p::P)::P where {C,D,P<:Polynomial{C,D}}
     return iszero(t) ? P() : P(map((pt) -> t * pt, p))
 end
-*(p::P, t::Term{C,D})::P where {C,D,P<:Polynomial{C,D}} = t * p #TODO: p not defined in main
+function *(p::P, t::Term{C,D})::P where {C,D,P<:Polynomial{C,D}} 
+    t * p #TODO: p not defined in main
+end
+
 
 
 
 """
 Multiplication of polynomial and an integer.
 """
-*(p::P, n::Integer)::P where {C,D,P<:Polynomial{C,D}} = Term(n,0) * p #TODO: p not defined in main
-*(n::Integer, p::P)::P where {C,D,P<:Polynomial{C,D}} = p * n
-
+function *(p::P, n::Integer)::P where {C,D,P<:Polynomial{C,D}} 
+    Term(n,0) * p #TODO: p not defined in main
+end
+function *(n::Integer, p::P)::P where {C,D,P<:Polynomial{C,D}} 
+    p * n
+end
 
 """
 Integer division of a polynomial by an integer modulo a prime.

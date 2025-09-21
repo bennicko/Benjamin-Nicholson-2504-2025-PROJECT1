@@ -28,27 +28,28 @@ struct PolynomialDense{C, D} <: Polynomial{C, D}
     terms::Vector{Term{C, D}}
     
     #Inner constructor of 0 polynomial
-    PolynomialDense() = new([zero(Term{C, D})])
+    PolynomialDense() = new{C,D}([zero(Term{Int, Int})])
 
     #Inner constructor of polynomial based on arbitrary list of terms
-    function PolynomialDense(vt::Vector{Term{C,D}})
+    function PolynomialDense(vt::Vector{Term{Int, Int}})
 
         #Filter the vector so that there is not more than a single zero term
         vt = filter((t)->!iszero(t), vt)
         if isempty(vt)
-            vt = [zero(Term{C, D})]
+            vt = [zero(Term{Int, Int})]
         end
 
         max_degree = maximum((t)->t.degree, vt)
-        terms = [zero(Term{C, D}) for i in 0:max_degree] #First set all terms with zeros
+        terms = [zero(Term{Int, Int}) for i in 0:max_degree] #First set all terms with zeros
 
         #now update based on the input terms
         for t in vt
             terms[t.degree + 1] = t #+1 accounts for 1-indexing
         end
-        return new(terms)
+        return new{C,D}(terms)
     end
 end
+
 
 ###########
 # Display #
@@ -82,8 +83,8 @@ length(p::PolynomialDense{C,D}) where {C,D} = length(p.terms)
 """
 The leading term of the polynomial.
 """
-function leading(p::PolynomialDense{C,D}) where {C,D}::Term{C,D}
-    isempty(p.terms) ? zero(Term{C,D}) : last(p.terms)
+function leading(p::PolynomialDense{C,D}) where {C,D}
+    isempty(p.terms) ? zero(Term{Int, Int}) : last(p.terms)
 end
 
 
@@ -120,7 +121,7 @@ end
 """
 Pop the leading term out of the polynomial. When polynomial is 0, keep popping out 0.
 """
-function pop!(p::PolynomialDense{C,D}) where {C,D} :: Term{C,D}
+function pop!(p::PolynomialDense{C,D}) where {C,D}
     popped_term = pop!(p.terms)  # last element popped is leading term
 
     while !isempty(p.terms) && iszero(last(p.terms))

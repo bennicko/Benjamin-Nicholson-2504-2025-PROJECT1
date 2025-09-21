@@ -6,7 +6,7 @@ include("poly_factorization_project.jl")
 
 #q2 p1
 
-x = x_poly(PolynomialDense)
+x = x_poly(PolynomialDense{BigInt, Int})
 p1 = 10x^2
 p2 = 20x^2
 p3 = 30x^2
