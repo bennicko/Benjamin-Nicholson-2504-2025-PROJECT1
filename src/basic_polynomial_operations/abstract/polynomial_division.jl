@@ -39,12 +39,36 @@ function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {P <: 
     return q, f
 end
 
+function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {C,D,P <: Polynomial{C,D}}
+    primeC = C(prime)
+    f, g = mod(num,primeC), mod(den,primeC)
+    @assert degree(num) == degree(mod(num, primeC))
+    iszero(g) && throw(DivideError())
+    iszero(f) && return zero(P), zero(P)
+    q = P()
+    prev_degree = degree(f)
+    while degree(f) ≥ degree(g) 
+        h = P([div_mod_p(leading(f), leading(g), primeC)])  #syzergy 
+        f = mod((f - h*g), primeC)
+        q = mod((q + h), primeC)  
+        prev_degree == degree(f) && break
+        prev_degree = degree(f)
+    end
+    @assert iszero( mod((num  - (q*g + f)),primeC))
+    return q, f
+end
+
+
 """
 The quotient from polynomial division modulo a prime. 
 """
 div_mod_p(num::P, den::P, prime::Integer) where {P <: Polynomial} = first(div_rem_mod_p(num, den, prime))
 
+div_mod_p(num::P, den::P, prime::Integer) where {C,D,P <: Polynomial{C,D}} = first(div_rem_mod_p(num, den, prime))
+
 """
 The remainder from polynomial division modulo a prime.
 """
 rem_mod_p(num::P, den::P, prime::Integer) where {P <: Polynomial} = last(div_rem_mod_p(num, den, prime))
+
+rem_mod_p(num::P, den::P, prime::Integer) where {C,D,P <: Polynomial{C,D}} = last(div_rem_mod_p(num, den, prime))

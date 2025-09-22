@@ -44,6 +44,10 @@ function factor(::Type{C}, f::P)::Vector{Tuple{P, Integer}} where {C, P <: Polyn
     not_implemented_error(f, "factor")
 end
 
+function factor(::Type{C}, f::P)::Vector{Tuple{P, Integer}} where {C, D, P <: Polynomial{C,D}}
+    not_implemented_error(f, "factor")
+end
+
 """
 Returns the quotient and remainder of num divided by den (where num/den have the 
 same concrete type). 
@@ -54,6 +58,11 @@ function div_rem(::Type{C}, num::P, den::P)::Tuple{P, P} where {C, P <: Polynomi
     not_implemented_error(num, "div_rem")
 end
 
+function div_rem(::Type{C}, num::P, den::P)::Tuple{P, P} where {C, D, P <: Polynomial{C,D}}
+    not_implemented_error(num, "div_rem")
+end
+
+
 """
 Distinct degree factorization.
 
@@ -63,7 +72,7 @@ product of the list is equal to `f`.
 
 NOTE: Override this in Task 6 for Zp[x].
 """
-function dd_factor(::Type{C}, f::P)::Array{P} where {C, P <: Polynomial}
+function dd_factor(::Type{C}, f::P)::Array{P} where {C, D, P <: Polynomial{C,D}}
     not_implemented_error(f, "dd_factor")
 end
 
@@ -75,7 +84,7 @@ that list is the polynomial `f`.
 
 NOTE: Override this in Task 6 for Zp[x].
 """
-function dd_split(::Type{C}, f::P, d::Integer)::Vector{P} where {C, P <: Polynomial}
+function dd_split(::Type{C}, f::P, d::Integer)::Vector{P} where {C, D, P <: Polynomial{C,D}}
     not_implemented_error(f, "dd_split")
 end
 
@@ -83,25 +92,25 @@ end
 Returns the quotient of num divided by den (where num/den have the 
 same concrete type) 
 """
-div(::Type{C}, num::P, den::P) where {C, P <: Polynomial} = first(div_rem(C, num, den))
+div(::Type{C}, num::P, den::P) where {C, D, P <: Polynomial{C,D}} = first(div_rem(C, num, den))
 
 """ 
 Returns the remainder of num divided by den (where num/den have the 
 same concrete type) 
 """
-rem(::Type{C}, num::P, den::P) where {C, P <: Polynomial} = last(div_rem(C, num, den))
+rem(::Type{C}, num::P, den::P) where {C, D, P <: Polynomial{C,D}} = last(div_rem(C, num, den))
 
 """
 The extended euclid algorithm for polynomials (of the same concrete subtype).
 """
-function extended_euclid_alg(::Type{C}, f::P, g::P) where {C, P <: Polynomial}
+function extended_euclid_alg(::Type{C}, f::P, g::P) where {C, D, P <: Polynomial{C,D}}
     return ext_euclid_alg(f, g, rem, div)
 end
 
 """
 The greatest common divisor of two polynomials (of the same concrete subtype).
 """
-gcd(::Type{C}, f::P, g::P) where {C, P <: Polynomial} = extended_euclid_alg(C, f, g) |> first
+gcd(::Type{C}, f::P, g::P) where {C, D, P <: Polynomial{C,D}} = extended_euclid_alg(C, f, g) |> first
 
 """
 Yun's algorithm to compute a square free polynomial can be performed over any so-called
@@ -145,6 +154,30 @@ function square_free(::Type{C}, f::P) where {C, P <: Polynomial}
 
     return sqr_free
 end
+
+function square_free(::Type{C}, f::P)  where {C, D, P <: Polynomial{C,D}}
+    # Remove minimum degree (in case char(C) != 0)
+    min_deg = last(f).degree
+    vt = filter(t -> !iszero(t), collect(f))
+    f = P([Term{C,D}(t.coeff, D(t.degree - min_deg)) for t in vt])
+
+    # Compute the gcd of f, f'
+    der_f = derivative(f)
+    sqr_part = gcd(C, f, der_f)
+
+    iszero(sqr_part) && return f * (min_deg > zero(min_deg) ? x_poly(P) : one(P))
+
+    # Remove factors with multiplicity > 1
+    sqr_free = div(f, sqr_part)
+
+    # Add one factor of `x` back in if necessary
+    if min_deg > zero(D) 
+        sqr_free *= x_poly(P)
+    end
+
+    return sqr_free
+end
+
 
 """
 Compute the number of times g divides f.

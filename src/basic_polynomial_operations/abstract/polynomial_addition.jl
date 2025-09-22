@@ -16,6 +16,12 @@ function +(p::Polynomial, t::Term)
 end
 +(t::Term, p::Polynomial) = p + t
 
+function +(p::Polynomial{C,D}, t::Term{C,D}) where {C,D}
+    not_implemented_error(p, "Polynomial + Term")
+end
++(t::Term{C,D}, p::P) where {C,D,P <:Polynomial{C,D}} = p + t
+
+
 """
 Add two polynomials of the same concrete subtype.
 
@@ -30,8 +36,23 @@ function +(p1::P, p2::P)::P where {P <: Polynomial}
     return p
 end
 
+function +(p1::P, p2::P)::P where {C,D,P <: Polynomial{C,D}}
+    p = deepcopy(p1)
+    for t in p2
+        p += t
+    end
+    return p
+end
+
 """
 Add a polynomial and an integer.
 """
 +(p::Polynomial, n::Integer) = p + Term(n,0)
 +(n::Integer, p::Polynomial) = p + Term(n,0)
+
+function +(p::P, n::Integer) where {C,D,P <: Polynomial{C,D}}
+    p + Term{C,D}(C(n), zero(D))
+end 
+function +(n::Integer, p::P) where {C,D,P <: Polynomial{C,D}}
+    p + Term{C,D}(C(n), zero(D))
+end
