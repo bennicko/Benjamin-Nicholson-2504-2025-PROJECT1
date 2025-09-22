@@ -32,7 +32,7 @@ println("---END HEAP UNIT TESTS---\n")
 # # Execute unit tests for polynomials
 # ####
 include("polynomials_test.jl")
-polynomial_types = [PolynomialDense] # The types of polynomials to unit test
+polynomial_types = [PolynomialDense{C,D} where {C,D}] # The types of polynomials to unit test
 println("---BEGIN POLYNOMIAL UNIT TESTS---\n")
 for poly in polynomial_types
     println("Type of `Polynomial`: $(poly)")

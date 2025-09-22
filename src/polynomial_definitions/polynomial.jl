@@ -61,9 +61,9 @@ end
 Construct a polynomial with a single term.
 """
 
-function (::Type{P})(t::Term)::P where {P <: Polynomial} 
-    return P([t]) 
-end
+# function (::Type{P})(t::Term)::P where {P <: Polynomial} 
+#     return P([t]) 
+# end
 
 function (::Type{P})(t::Term{C,D})::P where {C,D,P <: Polynomial{C,D}}
     return P([t])

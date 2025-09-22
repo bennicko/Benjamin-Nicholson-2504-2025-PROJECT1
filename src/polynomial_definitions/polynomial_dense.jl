@@ -19,36 +19,28 @@ zero terms with degree less than the degree of the polynomial are stored.
 E.g, for x^3 + 2x we store in memory:
     [Term(0, 0), Term(2, 1), Term(0, 2), Term(1, 3)]
 """
-struct PolynomialDense <: Polynomial
-    # FIXME in future make storing correct degree for zero terms an invariant - Mittun
-    #A zero packed vector of terms
-    #Terms are assumed to be in order with first term having degree 0, second degree 1, and so fourth
-    #until the degree of the polynomial. The leading term (i.e. last) is assumed to be non-zero except 
-    #for the zero polynomial where the vector is of length 1.
-    terms::Vector{Term{Int, Int}}   
-    
-    #Inner constructor of 0 polynomial
-    PolynomialDense() = new([zero(Term{Int, Int})])
+struct PolynomialDense{C,D} <: Polynomial{C,D}
+    terms::Vector{Term{C,D}}
 
-    #Inner constructor of polynomial based on arbitrary list of terms
-    function PolynomialDense(vt::Vector{Term{Int, Int}})
+    # zero polynomial
+    PolynomialDense() where {C,D} = new{C,D}([zero(Term{C,D})])
 
-        #Filter the vector so that there is not more than a single zero term
-        vt = filter((t)->!iszero(t), vt)
-        if isempty(vt)
-            vt = [zero(Term{Int, Int})]
-        end
+    # construct from a vector of terms
+    function PolynomialDense(vt::Vector{Term{C,D}}) where {C,D}
+        vt = filter(t -> !iszero(t), vt)
+        isempty(vt) && (vt = [zero(Term{C,D})])
 
-        max_degree = maximum((t)->t.degree, vt)
-        terms = [zero(Term{Int, Int}) for i in 0:max_degree] #First set all terms with zeros
+        max_degree = maximum(t -> t.degree, vt)
+        terms = [zero(Term{C,D}) for i in 0:max_degree]
 
-        #now update based on the input terms
         for t in vt
-            terms[t.degree + 1] = t #+1 accounts for 1-indexing
+            terms[t.degree + 1] = t
         end
-        return new(terms)
+
+        return new{C,D}(terms)
     end
 end
+
 
 ###########
 # Display #
@@ -64,7 +56,7 @@ end
 """
 Allows to do iteration over the non-zero terms of the polynomial. This implements the iteration interface.
 """
-iterate(p::PolynomialDense, state=1) = iterate(p.terms, state)
+iterate(p::PolynomialDense{C,D}, state=1) where {C,D} = iterate(p.terms, state)
 
 ##############################
 # Queries about a polynomial #
@@ -73,19 +65,27 @@ iterate(p::PolynomialDense, state=1) = iterate(p.terms, state)
 """
 The number of terms of the polynomial.
 """
-length(p::PolynomialDense) = length(p.terms) 
+length(p::PolynomialDense{C,D}) where {C,D} = length(p.terms) 
 
 """
 The leading term of the polynomial.
 """
-function leading(p::PolynomialDense)::Term
-    isempty(p.terms) ? zero(Term{Int, Int}) : last(p.terms) 
+# function leading(p::PolynomialDense)::Term
+#     isempty(p.terms) ? zero(Term{Int, Int}) : last(p.terms) 
+# end
+
+function leading(p::PolynomialDense{C,D})::Term{C,D} where {C,D}
+    isempty(p.terms) ? zero(Term{C, D}) : last(p.terms) 
 end
 
 """
 The term of smallest degree in this polynomial.
 """
-function last(p::PolynomialDense) 
+# function last(p::PolynomialDense) 
+#     iszero(p) && return leading(p) # zero Term
+#     p.terms[findfirst(t -> !iszero(t), p.terms)]
+# end
+function last(p::PolynomialDense{C,D}) where {C,D}
     iszero(p) && return leading(p) # zero Term
     p.terms[findfirst(t -> !iszero(t), p.terms)]
 end
@@ -110,6 +110,19 @@ function push!(p::PolynomialDense, t::Term)
     return p        
 end
 
+function push!(p::PolynomialDense{C,D}, t::Term{C,D}) where {C,D}
+    if t.degree < degree(p) || (t.degree == degree(p) && !iszero(p))
+        error("Cannot push a term $(t) that is not a new leading term (the polynomial had degree $(degree(p)))")
+    elseif iszero(p) && iszero(t.degree) # New constant polynomial
+         p.terms[1] = t
+    else
+        append!(p.terms, zeros(Term{C, D}, t.degree - degree(p)-1))
+        push!(p.terms, t)
+    end
+    return p        
+end
+
+
 """
 Pop the leading term out of the polynomial. When polynomial is 0, keep popping out 0.
 """
@@ -122,6 +135,20 @@ function pop!(p::PolynomialDense)::Term
 
     if isempty(p.terms)
         push!(p.terms, zero(Term{Int, Int}))
+    end
+
+    return popped_term
+end
+
+function pop!(p::PolynomialDense{C,D})::Term{C,D} where {C,D}
+    popped_term = pop!(p.terms) #last element popped is leading coefficient
+
+    while !isempty(p.terms) && iszero(last(p.terms))
+        pop!(p.terms)
+    end
+
+    if isempty(p.terms)
+        push!(p.terms, zero(Term{C, D}))
     end
 
     return popped_term
@@ -143,7 +170,13 @@ Check if two polynomials are the same.
 Note - even though this is done for `Polynomial`, we can override it for `PolynomialDense`
 to leverage Julia's speed with vectors.
 """
-==(p1::PolynomialDense, p2::PolynomialDense)::Bool = p1.terms == p2.terms
+# ==(p1::PolynomialDense, p2::PolynomialDense)::Bool = p1.terms == p2.terms
+
+function ==(p1::PolynomialDense{C,D}, p2::PolynomialDense{C,D}) where {C,D}
+    return p1.terms == p2.terms
+end
+
+
 
 ##################################################################
 # Operations with two objects where at least one is a polynomial #

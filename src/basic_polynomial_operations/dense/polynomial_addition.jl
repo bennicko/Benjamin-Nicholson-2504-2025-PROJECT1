@@ -9,7 +9,23 @@
 """
 Add a polynomial and a term.
 """
-function +(p::PolynomialDense, t::Term)
+# function +(p::PolynomialDense, t::Term)
+#     p = deepcopy(p)
+#     if t.degree > degree(p)
+#         push!(p, t)
+#     else
+#         if !iszero(p.terms[t.degree + 1]) #+1 is due to indexing
+#             p.terms[t.degree + 1] += t
+#         else
+#             p.terms[t.degree + 1] = t
+#         end
+#     end
+#     trim!(p)
+#     return p
+# end
+
+
+function +(p::PolynomialDense{C,D}, t::Term{C,D}) where {C,D}
     p = deepcopy(p)
     if t.degree > degree(p)
         push!(p, t)

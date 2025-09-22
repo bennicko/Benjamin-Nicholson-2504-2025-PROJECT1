@@ -186,3 +186,8 @@ function multiplicity(::Type{C}, f::P, g::P)::Integer where {C, P <: Polynomial}
     degree(gcd(C, f, g)) == 0 && return 0
     return 1 + multiplicity(C, div(f, g), g)
 end
+
+function multiplicity(::Type{C}, f::P, g::P)::Integer where {C, D, P <: Polynomial{C,D}}
+    degree(gcd(C, f, g)) == 0 && return 0
+    return 1 + multiplicity(C, div(f, g), g)
+end
