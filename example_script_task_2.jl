@@ -6,8 +6,8 @@ include("poly_factorization_project.jl")
 
 a = Term{BigInt,Int}(BigInt(1),1)
 b = Term{BigInt,Int}(BigInt(2),2)
-p = PolynomialDense{BigInt,Int}([a])
-
+a_poly = PolynomialDense([a])
+b_poly = PolynomialDense([b])
 
 
 x = x_poly(PolynomialDense)

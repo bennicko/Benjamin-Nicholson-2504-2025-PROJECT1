@@ -11,12 +11,12 @@ Add a polynomial and a term.
 
 This must be overridden by concrete subtypes.
 """
-function +(p::Polynomial, t::Term)
-    not_implemented_error(p, "Polynomial + Term")
-end
-+(t::Term, p::Polynomial) = p + t
+# function +(p::Polynomial, t::Term)
+#     not_implemented_error(p, "Polynomial + Term")
+# end
+# +(t::Term, p::Polynomial) = p + t
 
-function +(p::Polynomial{C,D}, t::Term{C,D}) where {C,D}
+function +(p::Polynomial{C,D}, t::Term{C,D}) where {C<:Integer,D<:Integer}
     not_implemented_error(p, "Polynomial + Term")
 end
 +(t::Term{C,D}, p::P) where {C,D,P <:Polynomial{C,D}} = p + t
