@@ -27,6 +27,7 @@ struct PolynomialDense{C,D} <: Polynomial{C,D}
 
     # construct from a vector of terms
     function PolynomialDense(vt::Vector{Term{C,D}}) where {C,D}
+        # Remove zero terms
         vt = filter(t -> !iszero(t), vt)
         isempty(vt) && (vt = [zero(Term{C,D})])
 

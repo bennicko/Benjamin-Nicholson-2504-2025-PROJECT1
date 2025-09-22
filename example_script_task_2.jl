@@ -6,16 +6,16 @@ include("poly_factorization_project.jl")
 
 a = Term{BigInt,Int}(BigInt(1),1)
 b = Term{BigInt,Int}(BigInt(2),2)
-p = PolynomialDense{BigInt,Int}([a,b])
+p = PolynomialDense{BigInt,Int}([a])
 
 
 
-# x = x_poly(PolynomialDense)
-# p1 = 100x^2
-# p2 = 50x^2
-# p3 = 10^10*x^2
-# p4 = 10^25*x^2
-# p5 = 10^32*x^2
+x = x_poly(PolynomialDense)
+p1 = 100x^2
+p2 = 50x^2
+p3 = 10^10*x^2
+p4 = 10^25*x^2
+p5 = 10^32*x^2
 
 
 # @show p1+p2
