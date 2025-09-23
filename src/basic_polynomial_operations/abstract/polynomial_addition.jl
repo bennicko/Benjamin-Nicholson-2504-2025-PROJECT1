@@ -28,15 +28,15 @@ Add two polynomials of the same concrete subtype.
 Note: This operation may be slow for some concrete subtypes. You may wish to override this to factor
 in the details of your polynomial representation when implementing your concrete subtype.
 """
-function +(p1::P, p2::P)::P where {P <: Polynomial}
-    p = deepcopy(p1)
-    for t in p2
-        p += t
-    end
-    return p
-end
+# function +(p1::P, p2::P)::P where {P <: Polynomial}
+#     p = deepcopy(p1)
+#     for t in p2
+#         p += t
+#     end
+#     return p
+# end
 
-function +(p1::P, p2::P)::P where {C,D,P <: Polynomial{C,D}}
+function +(p1::Polynomial{C,D}, p2::Polynomial{C,D})::Polynomial{C,D} where {C,D}
     p = deepcopy(p1)
     for t in p2
         p += t
@@ -50,9 +50,9 @@ Add a polynomial and an integer.
 # +(p::Polynomial, n::Integer) = p + Term(n,0)
 # +(n::Integer, p::Polynomial) = p + Term(n,0)
 
-function +(p::P, n::Integer) where {C,D,P <: Polynomial{C,D}}
+function +(p::Polynomial{C,D}, n::Integer) where {C,D}
     p + Term{C,D}(C(n), zero(D))
 end 
-function +(n::Integer, p::P) where {C,D,P <: Polynomial{C,D}}
+function +(n::Integer, p::Polynomial{C,D}) where {C,D}
     p + Term{C,D}(C(n), zero(D))
 end

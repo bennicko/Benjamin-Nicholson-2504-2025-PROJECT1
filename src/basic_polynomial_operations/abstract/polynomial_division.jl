@@ -21,7 +21,25 @@ Precondition:
 
 Note: clearly a monic polynomial will satisfy 1) in Zp for any field.
 """
-function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {P <: Polynomial}
+# function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {P <: Polynomial}
+#     f, g = mod(num,prime), mod(den,prime)
+#     @assert degree(num) == degree(mod(num, prime))
+#     iszero(g) && throw(DivideError())
+#     iszero(f) && return zero(P), zero(P)
+#     q = P()
+#     prev_degree = degree(f)
+#     while degree(f) ≥ degree(g) 
+#         h = P( div_mod_p(leading(f), leading(g), prime) )  #syzergy 
+#         f = mod((f - h*g), prime)
+#         q = mod((q + h), prime)  
+#         prev_degree == degree(f) && break
+#         prev_degree = degree(f)
+#     end
+#     @assert iszero( mod((num  - (q*g + f)),prime))
+#     return q, f
+# end
+
+function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {C,D,P <: Polynomial{C,D}}
     f, g = mod(num,prime), mod(den,prime)
     @assert degree(num) == degree(mod(num, prime))
     iszero(g) && throw(DivideError())
@@ -29,32 +47,13 @@ function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {P <: 
     q = P()
     prev_degree = degree(f)
     while degree(f) ≥ degree(g) 
-        h = P( div_mod_p(leading(f), leading(g), prime) )  #syzergy 
+        h = P([div_mod_p(leading(f), leading(g), prime)])  #syzergy 
         f = mod((f - h*g), prime)
         q = mod((q + h), prime)  
         prev_degree == degree(f) && break
         prev_degree = degree(f)
     end
     @assert iszero( mod((num  - (q*g + f)),prime))
-    return q, f
-end
-
-function div_rem_mod_p(num::P, den::P, prime::Integer)::Tuple{P, P} where {C,D,P <: Polynomial{C,D}}
-    primeC = C(prime)
-    f, g = mod(num,primeC), mod(den,primeC)
-    @assert degree(num) == degree(mod(num, primeC))
-    iszero(g) && throw(DivideError())
-    iszero(f) && return zero(P), zero(P)
-    q = P()
-    prev_degree = degree(f)
-    while degree(f) ≥ degree(g) 
-        h = P([div_mod_p(leading(f), leading(g), primeC)])  #syzergy 
-        f = mod((f - h*g), primeC)
-        q = mod((q + h), primeC)  
-        prev_degree == degree(f) && break
-        prev_degree = degree(f)
-    end
-    @assert iszero( mod((num  - (q*g + f)),primeC))
     return q, f
 end
 

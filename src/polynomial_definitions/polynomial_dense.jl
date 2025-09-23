@@ -57,7 +57,7 @@ end
 """
 Allows to do iteration over the non-zero terms of the polynomial. This implements the iteration interface.
 """
-iterate(p::PolynomialDense{C,D}, state=1) where {C,D} = iterate(p.terms, state)
+iterate(p::PolynomialDense, state=1) = iterate(p.terms, state)
 
 ##############################
 # Queries about a polynomial #
@@ -66,7 +66,7 @@ iterate(p::PolynomialDense{C,D}, state=1) where {C,D} = iterate(p.terms, state)
 """
 The number of terms of the polynomial.
 """
-length(p::PolynomialDense{C,D}) where {C,D} = length(p.terms) 
+length(p::PolynomialDense) = length(p.terms) 
 
 """
 The leading term of the polynomial.
@@ -99,17 +99,17 @@ end
 """
 Push a new leading term into the polynomial (note - a constant can be pushed onto the zero polynomial).
 """
-function push!(p::PolynomialDense, t::Term)
-    if t.degree < degree(p) || (t.degree == degree(p) && !iszero(p))
-        error("Cannot push a term $(t) that is not a new leading term (the polynomial had degree $(degree(p)))")
-    elseif iszero(p) && iszero(t.degree) # New constant polynomial
-         p.terms[1] = t
-    else
-        append!(p.terms, zeros(Term{Int, Int}, t.degree - degree(p)-1))
-        push!(p.terms, t)
-    end
-    return p        
-end
+# function push!(p::PolynomialDense, t::Term)
+#     if t.degree < degree(p) || (t.degree == degree(p) && !iszero(p))
+#         error("Cannot push a term $(t) that is not a new leading term (the polynomial had degree $(degree(p)))")
+#     elseif iszero(p) && iszero(t.degree) # New constant polynomial
+#          p.terms[1] = t
+#     else
+#         append!(p.terms, zeros(Term{Int, Int}, t.degree - degree(p)-1))
+#         push!(p.terms, t)
+#     end
+#     return p        
+# end
 
 function push!(p::PolynomialDense{C,D}, t::Term{C,D}) where {C,D}
     if t.degree < degree(p) || (t.degree == degree(p) && !iszero(p))
@@ -127,19 +127,19 @@ end
 """
 Pop the leading term out of the polynomial. When polynomial is 0, keep popping out 0.
 """
-function pop!(p::PolynomialDense)::Term 
-    popped_term = pop!(p.terms) #last element popped is leading coefficient
+# function pop!(p::PolynomialDense)::Term 
+#     popped_term = pop!(p.terms) #last element popped is leading coefficient
 
-    while !isempty(p.terms) && iszero(last(p.terms))
-        pop!(p.terms)
-    end
+#     while !isempty(p.terms) && iszero(last(p.terms))
+#         pop!(p.terms)
+#     end
 
-    if isempty(p.terms)
-        push!(p.terms, zero(Term{Int, Int}))
-    end
+#     if isempty(p.terms)
+#         push!(p.terms, zero(Term{Int, Int}))
+#     end
 
-    return popped_term
-end
+#     return popped_term
+# end
 
 function pop!(p::PolynomialDense{C,D})::Term{C,D} where {C,D}
     popped_term = pop!(p.terms) #last element popped is leading coefficient

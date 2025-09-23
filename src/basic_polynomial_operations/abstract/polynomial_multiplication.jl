@@ -19,9 +19,9 @@ Multiply two polynomials (of the same concrete subtype).
 # end
 
 function *(p1::P, p2::P)::P where {C,D,P <: Polynomial{C,D}}
-    @show P
-    @show p1.terms
-    @show p2.terms
+    # @show P
+    # @show p1.terms
+    # @show p2.terms
     
     p_out = P()
     for t in p1
@@ -35,7 +35,7 @@ end
 """
 Power of a polynomial.
 """
-function ^(p::P, n::Integer)::P where {P <: Polynomial}
+function ^(p::P, n::T) where {C,D,T <: Integer, P <: Polynomial{C,D}}
     n < 0 && error("No negative power")
     out = one(p)
     for _ in 1:n
@@ -44,12 +44,12 @@ function ^(p::P, n::Integer)::P where {P <: Polynomial}
     return out
 end
 
-function ^(p::P, n::Integer)::P where {C,D,P <: Polynomial{C,D}}
-    n < 0 && error("No negative power")
-    out = one(p)
-    for _ in 1:n
-        out *= p
-    end
-    return out
-end
+# function ^(p::P, n::Integer)::P where {C,D,P <: Polynomial{C,D}}
+#     n < 0 && error("No negative power")
+#     out = one(p)
+#     for _ in 1:n
+#         out *= p
+#     end
+#     return out
+# end
 

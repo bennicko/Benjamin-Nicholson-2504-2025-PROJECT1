@@ -11,7 +11,7 @@
 Test product of polynomials.
 """
 function prod_test_poly(::Type{P};
-    N::Int = 3 * 10^2, N_prods::Int = 20, seed::Int = 0
+    N::Int = 3, N_prods::Int = 20, seed::Int = 0
     ) where {C,D,P <: Polynomial{C,D}}
     Random.seed!(seed)
     for _ in 1:N
@@ -22,7 +22,7 @@ function prod_test_poly(::Type{P};
     end
 
     for _ in 1:N
-        p_base = P(Term(1,0))
+        p_base = P(Term(one(C), zero(D)))
         for _ in 1:N_prods
             p = rand(P)
             prod = p_base*p
