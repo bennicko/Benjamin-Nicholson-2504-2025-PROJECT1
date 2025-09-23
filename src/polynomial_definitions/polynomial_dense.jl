@@ -23,10 +23,10 @@ struct PolynomialDense{C,D} <: Polynomial{C,D}
     terms::Vector{Term{C,D}}
 
     # zero polynomial
-    PolynomialDense() where {C,D} = new{C,D}([zero(Term{C,D})])
+    PolynomialDense{C, D}() where {C, D} = new{C, D}([zero(Term{C, D})])
 
     # construct from a vector of terms
-    function PolynomialDense(vt::Vector{Term{C,D}}) where {C,D}
+    function PolynomialDense{C,D}(vt::Vector{Term{C,D}}) where {C,D}
         # Remove zero terms
         vt = filter(t -> !iszero(t), vt)
         isempty(vt) && (vt = [zero(Term{C,D})])
