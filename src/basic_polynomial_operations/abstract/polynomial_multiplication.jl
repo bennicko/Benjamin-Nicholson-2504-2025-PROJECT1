@@ -9,16 +9,20 @@
 """
 Multiply two polynomials (of the same concrete subtype).
 """
-function *(p1::P, p2::P)::P where {P <: Polynomial}
-    p_out = P()
-    for t in p1
-        new_summand = (t * p2)
-        p_out = p_out + new_summand
-    end
-    return p_out
-end
+# function *(p1::P, p2::P)::P where {P <: Polynomial}
+#     p_out = P()
+#     for t in p1
+#         new_summand = (t * p2)
+#         p_out = p_out + new_summand
+#     end
+#     return p_out
+# end
 
 function *(p1::P, p2::P)::P where {C,D,P <: Polynomial{C,D}}
+    @show P
+    @show p1.terms
+    @show p2.terms
+    
     p_out = P()
     for t in p1
         new_summand = (t * p2)

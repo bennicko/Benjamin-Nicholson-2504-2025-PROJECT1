@@ -47,8 +47,8 @@ end
 """
 Add a polynomial and an integer.
 """
-+(p::Polynomial, n::Integer) = p + Term(n,0)
-+(n::Integer, p::Polynomial) = p + Term(n,0)
+# +(p::Polynomial, n::Integer) = p + Term(n,0)
+# +(n::Integer, p::Polynomial) = p + Term(n,0)
 
 function +(p::P, n::Integer) where {C,D,P <: Polynomial{C,D}}
     p + Term{C,D}(C(n), zero(D))
