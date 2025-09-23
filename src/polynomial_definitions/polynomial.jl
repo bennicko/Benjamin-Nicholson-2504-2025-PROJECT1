@@ -186,9 +186,24 @@ end
 ###########
 
 """
-Show a polynomial. #up to here 12:44pm
+Show a polynomial.
 """
+#original
 # function show(io::IO, p::Polynomial)
+#     if iszero(p)
+#         print(io,"0")
+#     else
+#         n = length(p)
+#         for (i,t) in enumerate(p)
+#             if !iszero(t)
+#                 print(io, t, i != n ? " + " : "")
+#             end
+#         end
+#     end
+# end
+
+# original parametriesed
+# function show(io::IO, p::Polynomial{C,D}) where {C,D}
 #     if iszero(p)
 #         print(io,"0")
 #     else
@@ -203,14 +218,56 @@ Show a polynomial. #up to here 12:44pm
 
 function show(io::IO, p::Polynomial{C,D}) where {C,D}
     if iszero(p)
-        print(io,"0")
-    else
-        n = length(p)
-        for (i,t) in enumerate(p)
-            if !iszero(t)
-                print(io, t, i != n ? " + " : "")
+        print(io, "0")
+        return
+    end
+
+    terms = collect(p)
+    terms = reverse(terms)  # descending degree order
+    firstterm = true
+
+    for t in terms
+        c, d = t.coeff, t.degree
+        if iszero(c)
+            continue
+        end
+
+        # Handle sign
+        if firstterm
+            if c < 0
+                print(io, "-")
+            end
+        else
+            if c < 0
+                print(io, " - ")
+            else
+                print(io, " + ")
             end
         end
+
+        abs_c = abs(c)
+
+        # Handle different degree cases
+        if d == 0
+            # constant term, just print coeff
+            print(io, abs_c)
+        elseif d == 1
+            # linear term
+            if abs_c == 1
+                print(io, "x")
+            else
+                print(io, abs_c, "x")
+            end
+        else
+            # higher powers
+            if abs_c == 1
+                print(io, "x^", d)
+            else
+                print(io, abs_c, "x^", d)
+            end
+        end
+
+        firstterm = false
     end
 end
 
