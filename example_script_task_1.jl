@@ -3,7 +3,7 @@ Pkg.activate(".")
 
 include("poly_factorization_project.jl")
 
-x = x_poly(PolynomialDense)
+x = x_poly(PolynomialDense{Int,Int})
 f = 2x^3 + 4x^2 - 3x
 g = 2x^4 - 4x^2 - 3x + 3
 h = 3x^2 + 13x^4 - 8x

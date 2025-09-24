@@ -35,6 +35,8 @@ include("src/polynomial_definitions/polynomial_dense.jl")
     include("src/basic_polynomial_operations/dense/polynomial_multiplication.jl")
     include("src/basic_polynomial_operations/dense/polynomial_division.jl")
     include("src/basic_polynomial_operations/dense/polynomial_gcd.jl")
+#sparse
+include("src/polynomial_definitions/polynomial_sparse.jl")
 
 include("src/polynomial_factorization/factor.jl")
 

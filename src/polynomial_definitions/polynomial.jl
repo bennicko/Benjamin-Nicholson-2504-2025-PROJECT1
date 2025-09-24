@@ -569,32 +569,32 @@ end
 """
 Multiplication of polynomial and term.
 """
-function *(t::Term, p::P)::P where {P <: Polynomial} 
-    return iszero(t) ? P() : P(map((pt)->t*pt, p))
+# function *(t::Term, p::P)::P where {P <: Polynomial} 
+#     return iszero(t) ? P() : P(map((pt)->t*pt, p))
+# end
+# *(p::Polynomial, t::Term)::Polynomial = t*p
+
+function *(t::Term{C,D}, p::P)::P where {C,D,P <: Polynomial{C,D}}
+    return iszero(t) ? P() : P([t*pt for pt in p])  # ensure t*pt returns Term{C,D}
 end
-*(p::Polynomial, t::Term)::Polynomial = t*p
 
-# function *(t::Term{C,D}, p::P)::P where {C,D,P <: Polynomial{C,D}}
-#     return iszero(t) ? P() : P([t*pt for pt in p])  # ensure t*pt returns Term{C,D}
-# end
-
-# function *(p::P, t::Term{C,D})::P where {C,D,P <: Polynomial{C,D}}
-#     return t * p
-# end
+function *(p::P, t::Term{C,D})::P where {C,D,P <: Polynomial{C,D}}
+    return t * p
+end
 
 """
 Multiplication of polynomial and an integer.
 """
-*(p::Polynomial, n::Integer)::Polynomial = Term(n,0)*p
-*(n::Integer, p::Polynomial)::Polynomial = p*n
+# *(p::Polynomial, n::Integer)::Polynomial = Term(n,0)*p
+# *(n::Integer, p::Polynomial)::Polynomial = p*n
 
-# function *(p::P, n::Integer)::P where {C,D,P <: Polynomial{C,D}}
-#     return Term{C,D}(C(n), zero(D)) * p
-# end
+function *(p::P, n::Integer)::P where {C,D,P <: Polynomial{C,D}}
+    return Term{C,D}(C(n), zero(D)) * p
+end
 
-# function *(n::Integer, p::P)::P where {C,D,P <: Polynomial{C,D}}
-#     return p * n
-# end
+function *(n::Integer, p::P)::P where {C,D,P <: Polynomial{C,D}}
+    return p * n
+end
  """
 Integer division of a polynomial by an integer modulo a prime.
 
