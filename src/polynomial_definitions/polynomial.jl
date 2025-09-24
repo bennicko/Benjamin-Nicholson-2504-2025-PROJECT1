@@ -200,7 +200,7 @@ Show a polynomial.
 #     end
 # end
 
-# original parametriesed
+#original parametriesed
 # function show(io::IO, p::Polynomial{C,D}) where {C,D}
 #     if iszero(p)
 #         print(io,"0")

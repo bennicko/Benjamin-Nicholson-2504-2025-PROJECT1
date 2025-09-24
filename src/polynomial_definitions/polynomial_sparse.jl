@@ -46,9 +46,9 @@ struct PolynomialSparse{C,D} <: Polynomial{C,D}
     terms::Heap{Term{C,D}}
 
     # zero polynomial
-    PolynomialSparse{C, D}() where {C, D} = new{C, D}([zero(Term{C, D})])
+    PolynomialSparse{C, D}() where {C, D} = new{C, D}(Heap([zero(Term{C, D})]))
 
-    # construct from a vector of terms
+    # construct from a heap of terms
     function PolynomialSparse{C,D}(vt::Vector{Term{C,D}}) where {C,D}
         # Remove zero terms
         vt = filter(t -> !iszero(t), vt)
@@ -211,3 +211,19 @@ end
 # operation and re-implement it for `PolynomialSparse`.`
 
 
+"""
+reworking show because it was bricking my code
+"""
+
+function show(io::IO, p::PolynomialSparse{C,D}) where {C,D}
+    if iszero(p)
+        print(io,"0")
+    else
+        n = length(p)
+        for (i,t) in enumerate(p)
+            if !iszero(t)
+                print(io, t, i != n ? " + " : "")
+            end
+        end
+    end
+end
